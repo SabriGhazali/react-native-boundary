@@ -18,11 +18,11 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(add:(NSDictionary*)boundary addWithResolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 {
-    if (CLLocationManager.authorizationStatus != kCLAuthorizationStatusAuthorizedAlways) {
-        [self.locationManager requestAlwaysAuthorization];
-    }
+     if (CLLocationManager.authorizationStatus != kCLAuthorizationStatusAuthorizedAlways) {
+         [self.locationManager requestAlwaysAuthorization];
+     }
 
-    if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) {
+    // if ([CLLocationManager authorizationStatus] == kCLAuthorizationStatusAuthorizedAlways) {
         NSString *id = boundary[@"id"];
         CLLocationCoordinate2D center = CLLocationCoordinate2DMake([boundary[@"lat"] doubleValue], [boundary[@"lng"] doubleValue]);
         CLRegion *boundaryRegion = [[CLCircularRegion alloc]initWithCenter:center
@@ -31,10 +31,11 @@ RCT_EXPORT_METHOD(add:(NSDictionary*)boundary addWithResolver:(RCTPromiseResolve
 
         [self.locationManager startMonitoringForRegion:boundaryRegion];
 
+
         resolve(id);
-    } else {
-        reject(@"PERM", @"Access fine location is not permitted", [NSError errorWithDomain:@"boundary" code:200 userInfo:@{@"Error reason": @"Invalid permissions"}]);
-    }
+    // } else {
+    //     reject(@"PERM", @"Access fine location is not permitted", [NSError errorWithDomain:@"boundary" code:200 userInfo:@{@"Error reason": @"Invalid permissions"}]);
+    // }
 }
 
 RCT_EXPORT_METHOD(remove:(NSString *)boundaryId removeWithResolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
@@ -80,12 +81,22 @@ RCT_EXPORT_METHOD(removeAll:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromise
     return @[@"onEnter", @"onExit"];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region
-{
-    NSLog(@"didEnter : %@", region);
-    [self sendEventWithName:@"onEnter" body:region.identifier];
+-(void)locationManager:(CLLocationManager *)manager didDetermineState:(CLRegionState)state forRegion:(CLRegion *)region{
+    
+    NSLog(@"state ==== %ld for region %@",state,region);
+    
+    if(state == CLRegionStateInside){
+        [self sendEventWithName:@"onEnter" body:region.identifier];
+    }
+
 }
 
+//- (void)locationManager:(CLLocationManager *)manager didEnterRegion:(CLRegion *)region
+//{
+//    NSLog(@"didEnter : %@", region);
+//    [self sendEventWithName:@"onEnter" body:region.identifier];
+//}
+//
 - (void)locationManager:(CLLocationManager *)manager didExitRegion:(CLRegion *)region
 {
     NSLog(@"didExit : %@", region);
@@ -98,4 +109,3 @@ RCT_EXPORT_METHOD(removeAll:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromise
 }
 
 @end
-
