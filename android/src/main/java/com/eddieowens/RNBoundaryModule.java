@@ -4,8 +4,6 @@ import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import com.eddieowens.receivers.BoundaryEventBroadcastReceiver;
@@ -28,6 +26,8 @@ import android.os.Build;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 public class RNBoundaryModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
